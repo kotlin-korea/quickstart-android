@@ -14,20 +14,14 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
  */
 
 class MainActivity : AppCompatActivity() {
-    // private static final String TAG = "MainActivity";
     private val TAG = "MainActivity"
 
     // Remote Config keys
-    // private static final String LOADING_PHRASE_CONFIG_KEY = "loading_phrase";
     private val LOADING_PHRASE_CONFIG_KEY = "loading_phrase"
-    // private static final String WELCOME_MESSAGE_KEY = "welcome_message";
     private val WELCOME_MESSAGE_KEY = "welcome_message"
-    // private static final String WELCOME_MESSAGE_CAPS_KEY = "welcome_message_caps";
     private val WELCOME_MESSAGE_CAPS_KEY = "welcome_message_caps"
 
-    // private FirebaseRemoteConfig mFirebaseRemoteConfig;
     private var mFirebaseRemoteConfig : FirebaseRemoteConfig? = null
-    // private TextView mWelcomeTextView;
     private var mWelcomeTextView : TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
