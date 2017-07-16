@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     Toast.makeText(
                             this@MainActivity,
-                            "Fetch Succeeded",
+                            "Fetch Failed",
                             Toast.LENGTH_SHORT).show()
                 }
 
