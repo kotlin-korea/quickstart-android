@@ -9,14 +9,12 @@ open class BaseActivity : AppCompatActivity() {
     val mProgressDialog : ProgressDialog by lazy {
         ProgressDialog(this).apply {
             isIndeterminate = true
+            setMessage(getString(R.string.loading))
         }
     }
 
     fun showProgressDialog() {
-        mProgressDialog.run {
-            setMessage(getString(R.string.loading))
-            show()
-        }
+        mProgressDialog.show()
     }
 
     fun hideProgressDialog() {
