@@ -1,32 +1,26 @@
 package com.google.firebase.quickstart.auth
 
-/**
- * Created by cwdoh on 2017. 7. 17..
- */
-import android.app.ProgressDialog;
-import android.support.annotation.VisibleForTesting;
-import android.support.v7.app.AppCompatActivity;
+import android.app.ProgressDialog
+import android.support.annotation.VisibleForTesting
+import android.support.v7.app.AppCompatActivity
 
 open class BaseActivity : AppCompatActivity() {
     @VisibleForTesting
-    var mProgressDialog : ProgressDialog? = null
+    val mProgressDialog : ProgressDialog by lazy {
+        ProgressDialog(this).apply {
+            isIndeterminate = true
+        }
+    }
 
     fun showProgressDialog() {
-        (mProgressDialog ?: ProgressDialog(this)).also {
-            it.setMessage(getString(R.string.loading))
-            it.isIndeterminate = true
-            it.show()
-
-            mProgressDialog = it
+        mProgressDialog.run {
+            setMessage(getString(R.string.loading))
+            show()
         }
     }
 
     fun hideProgressDialog() {
-        mProgressDialog?.let {
-            when (it.isShowing) {
-                true -> it.dismiss()
-            }
-        }
+        mProgressDialog.takeIf { it.isShowing }?.dismiss()
     }
 
     public override fun onStop() {
