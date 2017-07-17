@@ -83,20 +83,22 @@ class MainActivity : AppCompatActivity() {
         // See Best Practices in the README for more information.
         mFirebaseRemoteConfig!!.fetch(cacheExpiration)
             .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
+                // shortcut to show short length toast message
+                val showShortLengthText = fun (message: String) : Unit {
                     Toast.makeText(
                             this@MainActivity,     // https://kotlinlang.org/docs/reference/this-expressions.html
-                            "Fetch Succeeded",
+                            message,
                             Toast.LENGTH_SHORT).show()
+                }
+
+                if (task.isSuccessful) {
+                    showShortLengthText("Fetch Succeeded")
 
                     // After config data is successfully fetched, it must be activated before newly fetched
                     // values are returned.
                     mFirebaseRemoteConfig!!.activateFetched()
                 } else {
-                    Toast.makeText(
-                            this@MainActivity,
-                            "Fetch Failed",
-                            Toast.LENGTH_SHORT).show()
+                    showShortLengthText("Fetch Failed")
                 }
 
                 displayWelcomeMessage()
