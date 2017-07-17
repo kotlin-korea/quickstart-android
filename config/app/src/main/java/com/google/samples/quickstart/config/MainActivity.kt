@@ -21,44 +21,41 @@ class MainActivity : AppCompatActivity() {
     private val WELCOME_MESSAGE_KEY = "welcome_message"
     private val WELCOME_MESSAGE_CAPS_KEY = "welcome_message_caps"
 
-    lateinit private var mFirebaseRemoteConfig : FirebaseRemoteConfig
-    private var mWelcomeTextView : TextView? = null
+    private val mFirebaseRemoteConfig : FirebaseRemoteConfig by lazy {
+        // Get Remote Config instance.
+        FirebaseRemoteConfig.getInstance().apply {
+            // Create a Remote Config Setting to enable developer mode, which you can use to increase
+            // the number of fetches available per hour during development. See Best Practices in the
+            // README for more information.
+            // [START enable_dev_mode]
+            val configSettings = FirebaseRemoteConfigSettings.Builder()
+                    .setDeveloperModeEnabled(BuildConfig.DEBUG)
+                    .build()
+
+            setConfigSettings(configSettings)
+            // [END enable_dev_mode]
+
+            // Set default Remote Config parameter values. An app uses the in-app default values, and
+            // when you need to adjust those defaults, you set an updated value for only the values you
+            // want to change in the Firebase console. See Best Practices in the README for more
+            // information.
+            // [START set_default_values]
+            setDefaults(R.xml.remote_config_defaults)
+            // [END set_default_values]
+        }
+    }
+    private val mWelcomeTextView : TextView by lazy {
+        findViewById(R.id.welcomeTextView) as TextView
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
 
-        mWelcomeTextView = findViewById(R.id.welcomeTextView) as TextView
-
-        val fetchButton = findViewById(R.id.fetchButton) as Button
-        fetchButton.setOnClickListener {
+        (findViewById(R.id.fetchButton) as Button).setOnClickListener {
             fetchWelcome()
         }
-
-        // Get Remote Config instance.
-        // [START get_remote_config_instance]
-        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
-        // [END get_remote_config_instance]
-
-        // Create a Remote Config Setting to enable developer mode, which you can use to increase
-        // the number of fetches available per hour during development. See Best Practices in the
-        // README for more information.
-        // [START enable_dev_mode]
-        val configSettings = FirebaseRemoteConfigSettings.Builder()
-                .setDeveloperModeEnabled(BuildConfig.DEBUG)
-                .build()
-
-        mFirebaseRemoteConfig.setConfigSettings(configSettings)
-        // [END enable_dev_mode]
-
-        // Set default Remote Config parameter values. An app uses the in-app default values, and
-        // when you need to adjust those defaults, you set an updated value for only the values you
-        // want to change in the Firebase console. See Best Practices in the README for more
-        // information.
-        // [START set_default_values]
-        mFirebaseRemoteConfig.setDefaults(R.xml.remote_config_defaults)
-        // [END set_default_values]
 
         fetchWelcome()
     }
@@ -67,7 +64,7 @@ class MainActivity : AppCompatActivity() {
      * Fetch a welcome message from the Remote Config service, and then activate it.
      */
     private fun fetchWelcome(): Unit {
-        mWelcomeTextView?.text = mFirebaseRemoteConfig.getString(LOADING_PHRASE_CONFIG_KEY)
+        mWelcomeTextView.text = mFirebaseRemoteConfig.getString(LOADING_PHRASE_CONFIG_KEY)
 
         var cacheExpiration : Long = 3600
         // If your app is using developer mode, cacheExpiration is set to 0, so each fetch will
@@ -91,14 +88,17 @@ class MainActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT).show()
                 }
 
-                if (task.isSuccessful) {
-                    showShortLengthText("Fetch Succeeded")
+                when (task.isSuccessful) {
+                    true -> {
+                        showShortLengthText("Fetch Succeeded")
 
-                    // After config data is successfully fetched, it must be activated before newly fetched
-                    // values are returned.
-                    mFirebaseRemoteConfig.activateFetched()
-                } else {
-                    showShortLengthText("Fetch Failed")
+                        // After config data is successfully fetched, it must be activated before newly fetched
+                        // values are returned.
+                        mFirebaseRemoteConfig.activateFetched()
+                    }
+                    else -> {
+                        showShortLengthText("Fetch Failed")
+                    }
                 }
 
                 displayWelcomeMessage()
@@ -112,13 +112,9 @@ class MainActivity : AppCompatActivity() {
      */
     // [START display_welcome_message]
     private fun displayWelcomeMessage() : Unit {
-        mWelcomeTextView?.let {
-            // [START get_config_values]
-            val welcomeMessage : String? = mFirebaseRemoteConfig.getString(WELCOME_MESSAGE_KEY)
-            // [END get_config_values]
-
-            it.setAllCaps(mFirebaseRemoteConfig.getBoolean(WELCOME_MESSAGE_CAPS_KEY))
-            it.text = welcomeMessage
+        mWelcomeTextView.run {
+            setAllCaps(mFirebaseRemoteConfig.getBoolean(WELCOME_MESSAGE_CAPS_KEY))
+            text = mFirebaseRemoteConfig.getString(WELCOME_MESSAGE_KEY)
         }
     }
     // [END display_welcome_message]
