@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     private val WELCOME_MESSAGE_KEY = "welcome_message"
     private val WELCOME_MESSAGE_CAPS_KEY = "welcome_message_caps"
 
-    private var mFirebaseRemoteConfig : FirebaseRemoteConfig? = null
+    lateinit private var mFirebaseRemoteConfig : FirebaseRemoteConfig
     private var mWelcomeTextView : TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,11 +45,11 @@ class MainActivity : AppCompatActivity() {
         // the number of fetches available per hour during development. See Best Practices in the
         // README for more information.
         // [START enable_dev_mode]
-        val configSettings : FirebaseRemoteConfigSettings = FirebaseRemoteConfigSettings.Builder()
+        val configSettings = FirebaseRemoteConfigSettings.Builder()
                 .setDeveloperModeEnabled(BuildConfig.DEBUG)
                 .build()
 
-        mFirebaseRemoteConfig!!.setConfigSettings(configSettings)
+        mFirebaseRemoteConfig.setConfigSettings(configSettings)
         // [END enable_dev_mode]
 
         // Set default Remote Config parameter values. An app uses the in-app default values, and
@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         // want to change in the Firebase console. See Best Practices in the README for more
         // information.
         // [START set_default_values]
-        mFirebaseRemoteConfig!!.setDefaults(R.xml.remote_config_defaults)
+        mFirebaseRemoteConfig.setDefaults(R.xml.remote_config_defaults)
         // [END set_default_values]
 
         fetchWelcome()
@@ -67,12 +67,12 @@ class MainActivity : AppCompatActivity() {
      * Fetch a welcome message from the Remote Config service, and then activate it.
      */
     private fun fetchWelcome(): Unit {
-        mWelcomeTextView!!.text = mFirebaseRemoteConfig!!.getString(LOADING_PHRASE_CONFIG_KEY)
+        mWelcomeTextView?.text = mFirebaseRemoteConfig.getString(LOADING_PHRASE_CONFIG_KEY)
 
         var cacheExpiration : Long = 3600
         // If your app is using developer mode, cacheExpiration is set to 0, so each fetch will
         // retrieve values from the service.
-        if (mFirebaseRemoteConfig!!.info.configSettings.isDeveloperModeEnabled) {
+        if (mFirebaseRemoteConfig.info.configSettings.isDeveloperModeEnabled) {
             cacheExpiration = 0
         }
 
@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
         // will use fetch data from the Remote Config service, rather than cached parameter values,
         // if cached parameter values are more than cacheExpiration seconds old.
         // See Best Practices in the README for more information.
-        mFirebaseRemoteConfig!!.fetch(cacheExpiration)
+        mFirebaseRemoteConfig.fetch(cacheExpiration)
             .addOnCompleteListener(this) { task ->
                 // shortcut to show short length toast message
                 val showShortLengthText = fun (message: String) : Unit {
@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity() {
 
                     // After config data is successfully fetched, it must be activated before newly fetched
                     // values are returned.
-                    mFirebaseRemoteConfig!!.activateFetched()
+                    mFirebaseRemoteConfig.activateFetched()
                 } else {
                     showShortLengthText("Fetch Failed")
                 }
@@ -112,13 +112,13 @@ class MainActivity : AppCompatActivity() {
      */
     // [START display_welcome_message]
     private fun displayWelcomeMessage() : Unit {
-        mFirebaseRemoteConfig?.let {
+        mWelcomeTextView?.let {
             // [START get_config_values]
-            val welcomeMessage : String? = it.getString(WELCOME_MESSAGE_KEY)
+            val welcomeMessage : String? = mFirebaseRemoteConfig.getString(WELCOME_MESSAGE_KEY)
             // [END get_config_values]
 
-            mWelcomeTextView!!.setAllCaps(it.getBoolean(WELCOME_MESSAGE_CAPS_KEY))
-            mWelcomeTextView!!.text = welcomeMessage
+            it.setAllCaps(mFirebaseRemoteConfig.getBoolean(WELCOME_MESSAGE_CAPS_KEY))
+            it.text = welcomeMessage
         }
     }
     // [END display_welcome_message]
