@@ -22,14 +22,10 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
-
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.android.synthetic.main.activity_custom.*
 
 /**
  * Demonstrate Firebase Authentication using a custom minted token. For more information, see:
@@ -53,7 +49,7 @@ class CustomAuthActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_custom)
 
         // Button click listeners
-        findViewById(R.id.button_sign_in).setOnClickListener(this)
+        button_sign_in.setOnClickListener(this)
 
         // Create token receiver (for demo purposes only)
         mTokenReceiver = object : TokenBroadcastReceiver() {
@@ -62,7 +58,6 @@ class CustomAuthActivity : AppCompatActivity(), View.OnClickListener {
                 setCustomToken(token)
             }
         }
-
     }
 
     // [START on_start_check_user]
@@ -77,7 +72,7 @@ class CustomAuthActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
-        registerReceiver(mTokenReceiver, TokenBroadcastReceiver.getFilter())
+        registerReceiver(mTokenReceiver, TokenBroadcastReceiver.filter)
     }
 
 
@@ -91,30 +86,24 @@ class CustomAuthActivity : AppCompatActivity(), View.OnClickListener {
         // [START sign_in_custom]
         mAuth.signInWithCustomToken(mCustomToken!!)
                 .addOnCompleteListener(this) { task ->
-                    when (task.isSuccessful) {
-                        true -> {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCustomToken:success")
-                            mAuth.currentUser.let {
-                                updateUI(it)
-                            }
-                        }
-                        else -> {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithCustomToken:failure", task.exception)
-                            Toast.makeText(this@CustomAuthActivity, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show()
-                            updateUI(null)
-                        }
+                    if (task.isSuccessful) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d(TAG, "signInWithCustomToken:success")
+                        updateUI(mAuth.currentUser)
+                    }
+                    else {
+                        // If sign in fails, display a message to the user.
+                        Log.w(TAG, "signInWithCustomToken:failure", task.exception)
+                        Toast.makeText(this@CustomAuthActivity, "Authentication failed.",
+                                Toast.LENGTH_SHORT).show()
+                        updateUI(null)
                     }
                 }
         // [END sign_in_custom]
     }
 
     private fun updateUI(user: FirebaseUser?) {
-        val textView = findViewById(R.id.text_sign_in_status) as TextView
-
-        textView.text =
+        text_sign_in_status.text =
                 if (user != null)
                     "User ID: " + user.uid
                 else
@@ -124,15 +113,11 @@ class CustomAuthActivity : AppCompatActivity(), View.OnClickListener {
     private fun setCustomToken(token: String) {
         mCustomToken = token
 
-        val status: String =
-            if (mCustomToken != null)
-                "Token:" + mCustomToken!!
-            else
-                "Token: null"
+        val status: String = "Token: " + mCustomToken ?: "null"
 
         // Enable/disable sign-in button and show the token
-        findViewById(R.id.button_sign_in).isEnabled = mCustomToken != null
-        (findViewById(R.id.text_token_status) as TextView).text = status
+        button_sign_in.isEnabled = mCustomToken != null
+        text_token_status.text = status
     }
 
     override fun onClick(v: View) {
@@ -142,7 +127,6 @@ class CustomAuthActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     companion object {
-
         private val TAG = "CustomAuthActivity"
     }
 }
