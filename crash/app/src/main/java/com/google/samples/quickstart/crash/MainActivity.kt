@@ -19,7 +19,6 @@ package com.google.samples.quickstart.crash
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
 
@@ -41,17 +40,17 @@ import com.google.firebase.crash.FirebaseCrash
  * Firebase Crash on Android.
  */
 class MainActivity : AppCompatActivity() {
+    private val TAG = "MainActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         // Checkbox to indicate when to catch the thrown exception.
-        val catchCrashCheckBox = findViewById(R.id.catchCrashCheckBox) as CheckBox
+        val catchCrashCheckBox = findViewById(R.id.catchCrashCheckBox) as CheckBox?
 
         // Button that causes the NullPointerException to be thrown.
-        val crashButton = findViewById(R.id.crashButton) as Button
-        crashButton.setOnClickListener {
+        (findViewById(R.id.crashButton) as Button).setOnClickListener {
             // Log that crash button was clicked. This version of Crash.log() will include the
             // message in the crash report as well as show the message in logcat.
             FirebaseCrash.logcat(Log.INFO, TAG, "Crash button clicked")
@@ -59,18 +58,20 @@ class MainActivity : AppCompatActivity() {
             // If catchCrashCheckBox is checked catch the exception and report is using
             // Crash.report(). Otherwise throw the exception and let Firebase Crash automatically
             // report the crash.
-            if (catchCrashCheckBox.isChecked) {
-                try {
-                    throw NullPointerException()
-                } catch (ex: NullPointerException) {
-                    // [START log_and_report]
-                    FirebaseCrash.logcat(Log.ERROR, TAG, "NPE caught")
-                    FirebaseCrash.report(ex)
-                    // [END log_and_report]
+            when (catchCrashCheckBox?.isChecked) {
+                true -> {
+                    try {
+                        throw NullPointerException()
+                    } catch (ex: NullPointerException) {
+                        // [START log_and_report]
+                        FirebaseCrash.logcat(Log.ERROR, TAG, "NPE caught")
+                        FirebaseCrash.report(ex)
+                        // [END log_and_report]
+                    }
                 }
-
-            } else {
-                throw NullPointerException()
+                false -> {
+                    throw NullPointerException()
+                }
             }
         }
 
@@ -79,10 +80,5 @@ class MainActivity : AppCompatActivity() {
         // [START log_event]
         FirebaseCrash.log("Activity created")
         // [END log_event]
-    }
-
-    companion object {
-
-        private val TAG = "MainActivity"
     }
 }
