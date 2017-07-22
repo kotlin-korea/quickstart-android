@@ -29,7 +29,7 @@ public class InterstitialAdTest {
     private AdViewIdlingResource mAdResource;
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+    public ActivityTestRule<MainActivityKt> mActivityTestRule = new ActivityTestRule<>(MainActivityKt.class);
 
     @Before
     public void setUp() {

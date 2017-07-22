@@ -34,7 +34,7 @@ import com.google.android.gms.ads.InterstitialAd;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "MainActivityKt";
 
     private AdView mAdView;
     // [START_EXCLUDE]
