@@ -1,5 +1,6 @@
 package com.google.samples.quickstart.admobexample
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -47,14 +48,61 @@ class MainActivityKt : AppCompatActivity() {
             }
         }
 
-    }
+        // [END create_interstitial_ad_listener]
 
-    private fun beginSecondActivity() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        // [START display_interstitial_ad]
+        mLoadInterstitialButton = findViewById(R.id.load_interstitial_button) as Button?
+        mLoadInterstitialButton!!.setOnClickListener {
+            view->
+            if(mInterstitialAd!!.isLoaded()){
+                mInterstitialAd!!.show()
+            }else{
+                beginSecondActivity()
+            }
+        }
+        // [END display_interstitial_ad]
+
+        // Disable button if an interstitial ad is not loaded yet.
+        mLoadInterstitialButton!!.isEnabled = mInterstitialAd!!.isLoaded
+
     }
 
     private fun requestNewInterstitial() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        var adRequest = AdRequest.Builder().build()
+        mInterstitialAd!!.loadAd(adRequest)
+    }
+
+    private fun beginSecondActivity() {
+        var intent :Intent = Intent(this, SecondActivity::class.java)
+        startActivity(intent)
+    }
+
+    override fun onPause() {
+        if(mAdView != null){
+            mAdView!!.destroy()
+        }
+        super.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(mAdView != null){
+            mAdView!!.resume()
+        }
+        if(!mInterstitialAd!!.isLoaded){
+            requestNewInterstitial()
+        }
+    }
+
+    override fun onDestroy() {
+        if(mAdView != null){
+            mAdView!!.destroy()
+        }
+        super.onDestroy()
+    }
+
+    fun getAdView() : AdView{
+        return mAdView!!
     }
 }
 
