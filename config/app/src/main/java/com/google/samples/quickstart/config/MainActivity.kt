@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_main.*
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
@@ -44,18 +45,14 @@ class MainActivity : AppCompatActivity() {
             // [END set_default_values]
         }
     }
-    private val mWelcomeTextView : TextView by lazy {
-        findViewById(R.id.welcomeTextView) as TextView
-    }
+    private val mWelcomeTextView : TextView by lazy { welcomeTextView }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
 
-        (findViewById(R.id.fetchButton) as Button).setOnClickListener {
-            fetchWelcome()
-        }
+        fetchButton.setOnClickListener { fetchWelcome() }
 
         fetchWelcome()
     }
@@ -88,17 +85,15 @@ class MainActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT).show()
                 }
 
-                when (task.isSuccessful) {
-                    true -> {
-                        showShortLengthText("Fetch Succeeded")
+                if (task.isSuccessful) {
+                    showShortLengthText("Fetch Succeeded")
 
-                        // After config data is successfully fetched, it must be activated before newly fetched
-                        // values are returned.
-                        mFirebaseRemoteConfig.activateFetched()
-                    }
-                    else -> {
-                        showShortLengthText("Fetch Failed")
-                    }
+                    // After config data is successfully fetched, it must be activated before newly fetched
+                    // values are returned.
+                    mFirebaseRemoteConfig.activateFetched()
+                }
+                else {
+                    showShortLengthText("Fetch Failed")
                 }
 
                 displayWelcomeMessage()
