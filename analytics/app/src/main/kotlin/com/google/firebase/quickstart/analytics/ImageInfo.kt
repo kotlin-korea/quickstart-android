@@ -14,28 +14,31 @@
  * limitations under the License.
  */
 
-package com.google.firebase.quickstart.analytics;
+package com.google.firebase.quickstart.analytics
 
 /**
  * Pair of resource IDs representing an image and its title.
  */
-public class ImageInfo {
+class ImageInfo
+/**
+ * Create a new ImageInfo.
 
-    public final int image;
-    public final int title;
-    public final int id;
+ * @param image resource of image
+ * *
+ * @param title resource of title
+ * *
+ * @param id resource of id
+ */
+(image: Int, title: Int, id: Int) {
 
-    /**
-     * Create a new ImageInfo.
-     *
-     * @param image resource of image
-     * @param title resource of title
-     * @param id resource of id
-     */
-    public ImageInfo(int image, int title, int id) {
-        this.setImage(image);
-        this.setTitle(title);
-        this.setId(id);
+    val image: Int = 0
+    val title: Int = 0
+    val id: Int = 0
+
+    init {
+        this.setImage(image)
+        this.setTitle(title)
+        this.setId(id)
     }
 
 }

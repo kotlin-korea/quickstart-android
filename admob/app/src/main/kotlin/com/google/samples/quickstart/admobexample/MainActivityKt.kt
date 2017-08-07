@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.widget.Button
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
@@ -16,22 +15,29 @@ import com.google.android.gms.ads.InterstitialAd
 class MainActivityKt : AppCompatActivity() {
 
     private val TAG : String = "MainActivityKt"
-    private var mAdView : AdView? = null
-    private var mInterstitialAd: InterstitialAd? = null
-    private var mLoadInterstitialButton : Button? = null
+
+    private val mAdView by lazy {
+        findViewById(R.id.adView) as AdView
+    }
+
+    private val mInterstitialAd by lazy {
+        InterstitialAd(this)
+    }
+
+    private val mLoadInterstitialButton by lazy {
+        findViewById(R.id.load_interstitial_button)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        mAdView = findViewById(R.id.adView) as AdView
-        var adRequest:AdRequest = AdRequest.Builder().build()
-        mAdView!!.loadAd(adRequest)
+        var adRequest: AdRequest = AdRequest.Builder().build()
+        mAdView.loadAd(adRequest)
 
-        mInterstitialAd = InterstitialAd(this)
-        mInterstitialAd!!.adUnitId = getString(R.string.interstitial_ad_unit_id)
+        mInterstitialAd.adUnitId = getString(R.string.interstitial_ad_unit_id)
 
-        mInterstitialAd!!.adListener = object :AdListener(){
+        mInterstitialAd.adListener = object : AdListener(){
             override fun onAdClosed() {
                 requestNewInterstitial()
                 beginSecondActivity()
@@ -39,7 +45,7 @@ class MainActivityKt : AppCompatActivity() {
 
             override fun onAdLoaded() {
                 if(mLoadInterstitialButton != null){
-                    mLoadInterstitialButton!!.isEnabled = true
+                    mLoadInterstitialButton.isEnabled = true
                 }
             }
 
@@ -51,11 +57,9 @@ class MainActivityKt : AppCompatActivity() {
         // [END create_interstitial_ad_listener]
 
         // [START display_interstitial_ad]
-        mLoadInterstitialButton = findViewById(R.id.load_interstitial_button) as Button?
-        mLoadInterstitialButton!!.setOnClickListener {
-            view->
-            if(mInterstitialAd!!.isLoaded()){
-                mInterstitialAd!!.show()
+        mLoadInterstitialButton.setOnClickListener {
+            if(mInterstitialAd.isLoaded){
+                mInterstitialAd.show()
             }else{
                 beginSecondActivity()
             }
@@ -63,13 +67,13 @@ class MainActivityKt : AppCompatActivity() {
         // [END display_interstitial_ad]
 
         // Disable button if an interstitial ad is not loaded yet.
-        mLoadInterstitialButton!!.isEnabled = mInterstitialAd!!.isLoaded
+        mLoadInterstitialButton.isEnabled = mInterstitialAd.isLoaded
 
     }
 
     private fun requestNewInterstitial() {
         var adRequest = AdRequest.Builder().build()
-        mInterstitialAd!!.loadAd(adRequest)
+        mInterstitialAd.loadAd(adRequest)
     }
 
     private fun beginSecondActivity() {
@@ -79,7 +83,7 @@ class MainActivityKt : AppCompatActivity() {
 
     override fun onPause() {
         if(mAdView != null){
-            mAdView!!.destroy()
+            mAdView.destroy()
         }
         super.onPause()
     }
@@ -87,22 +91,22 @@ class MainActivityKt : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         if(mAdView != null){
-            mAdView!!.resume()
+            mAdView.resume()
         }
-        if(!mInterstitialAd!!.isLoaded){
+        if(!mInterstitialAd.isLoaded){
             requestNewInterstitial()
         }
     }
 
     override fun onDestroy() {
         if(mAdView != null){
-            mAdView!!.destroy()
+            mAdView.destroy()
         }
         super.onDestroy()
     }
 
     fun getAdView() : AdView{
-        return mAdView!!
+        return mAdView
     }
 }
 
