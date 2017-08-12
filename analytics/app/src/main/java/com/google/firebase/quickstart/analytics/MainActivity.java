@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
     private String getCurrentImageTitle() {
         int position = mViewPager.getCurrentItem();
         ImageInfo info = IMAGE_INFOS[position];
-        return getString(info.getTitle());
+        return getString(info.title);
     }
 
     /**
@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
     private String getCurrentImageId() {
         int position = mViewPager.getCurrentItem();
         ImageInfo info = IMAGE_INFOS[position];
-        return getString(info.getId());
+        return getString(info.id);
     }
 
     /**
@@ -272,7 +272,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public Fragment getItem(int position) {
             ImageInfo info = infos[position];
-            return ImageFragment.newInstance(info.getImage());
+            return ImageFragment.newInstance(info.image);
         }
 
         @Override
@@ -287,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
             }
             Locale l = Locale.getDefault();
             ImageInfo info = infos[position];
-            return getString(info.getTitle()).toUpperCase(l);
+            return getString(info.title).toUpperCase(l);
         }
     }
 }

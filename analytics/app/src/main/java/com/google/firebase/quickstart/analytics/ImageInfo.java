@@ -33,9 +33,8 @@ public class ImageInfo {
      * @param id resource of id
      */
     public ImageInfo(int image, int title, int id) {
-        this.setImage(image);
-        this.setTitle(title);
-        this.setId(id);
+        this.image = image;
+        this.title = title;
+        this.id = id;
     }
-
 }
